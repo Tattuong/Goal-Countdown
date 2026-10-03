@@ -18,32 +18,40 @@ class MainShell extends StatefulWidget {
 
 class MainShellState extends State<MainShell> {
   int _index = 0;
-  final _shopKey = GlobalKey<ShopScreenState>();
+  ShopRewardsTab _shopTab = ShopRewardsTab.all;
+  int _shopTabRequest = 0;
 
   void openShop({ShopRewardsTab tab = ShopRewardsTab.all}) {
-    setState(() => _index = 1);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _shopKey.currentState?.selectTab(tab);
+    setState(() {
+      _index = 1;
+      _shopTab = tab;
+      _shopTabRequest++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
     final screens = [
       const HomeScreen(),
-      ShopScreen(key: _shopKey, embedded: true),
+      ShopScreen(
+        embedded: true,
+        active: _index == 1,
+        requestedTab: _shopTab,
+        tabRequest: _shopTabRequest,
+      ),
       const SettingsScreen(),
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: IndexedStack(index: _index, children: screens),
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkSurface : AppColors.surface,
+            color: theme.colorScheme.surface,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),
@@ -61,6 +69,7 @@ class MainShellState extends State<MainShell> {
                   activeIcon: Icons.track_changes_rounded,
                   label: AppStrings.t(context, 'navGoals'),
                   active: _index == 0,
+                  primary: primary,
                   onTap: () => setState(() => _index = 0),
                 ),
                 _NavItem(
@@ -68,6 +77,7 @@ class MainShellState extends State<MainShell> {
                   activeIcon: Icons.stars_rounded,
                   label: AppStrings.t(context, 'navShop'),
                   active: _index == 1,
+                  primary: primary,
                   onTap: () => setState(() => _index = 1),
                 ),
                 _NavItem(
@@ -75,6 +85,7 @@ class MainShellState extends State<MainShell> {
                   activeIcon: Icons.settings_rounded,
                   label: AppStrings.t(context, 'navSettings'),
                   active: _index == 2,
+                  primary: primary,
                   onTap: () => setState(() => _index = 2),
                 ),
               ],
@@ -91,6 +102,7 @@ class _NavItem extends StatelessWidget {
   final IconData activeIcon;
   final String label;
   final bool active;
+  final Color primary;
   final VoidCallback onTap;
 
   const _NavItem({
@@ -98,6 +110,7 @@ class _NavItem extends StatelessWidget {
     required this.activeIcon,
     required this.label,
     required this.active,
+    required this.primary,
     required this.onTap,
   });
 
@@ -111,7 +124,7 @@ class _NavItem extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
-            color: active ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
+            color: active ? primary.withValues(alpha: 0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
@@ -119,7 +132,7 @@ class _NavItem extends StatelessWidget {
             children: [
               Icon(
                 active ? activeIcon : icon,
-                color: active ? AppColors.primary : AppColors.onSurfaceVariant,
+                color: active ? primary : AppColors.onSurfaceVariant,
                 size: 24,
               ),
               const SizedBox(height: 2),
@@ -128,7 +141,8 @@ class _NavItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: active ? FontWeight.w800 : FontWeight.w500,
-                  color: active ? AppColors.primary : AppColors.onSurfaceVariant,
+                  color:
+                      active ? primary : AppColors.onSurfaceVariant,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

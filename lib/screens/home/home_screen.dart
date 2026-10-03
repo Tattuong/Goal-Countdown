@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
-import '../../models/app_theme_preset.dart';
+import '../../models/shop_item.dart';
 import '../../providers/goals_provider.dart';
 import '../../providers/shop_provider.dart';
 import '../../widgets/coin_balance_chip.dart';
@@ -54,10 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final skin = shop.activeSkin;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          _HeaderGlow(isDark: isDark, background: shop.activeBackground),
+          _HeaderGlow(
+            isDark: isDark,
+            gradient: shop.activeBackgroundId == ShopCatalog.defaultBackgroundId
+                ? shop.activeTheme.headerGradient
+                : shop.activeBackground.gradient,
+          ),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -100,9 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _HeaderGlow extends StatelessWidget {
   final bool isDark;
-  final GoalBackground background;
+  final LinearGradient gradient;
 
-  const _HeaderGlow({required this.isDark, required this.background});
+  const _HeaderGlow({required this.isDark, required this.gradient});
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +115,15 @@ class _HeaderGlow extends StatelessWidget {
       top: 0,
       left: 0,
       right: 0,
-      height: 180,
+      height: 220,
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              background.gradient.colors.first.withValues(alpha: isDark ? 0.35 : 0.18),
+              gradient.colors.first.withValues(alpha: isDark ? 0.55 : 0.28),
+              gradient.colors.last.withValues(alpha: isDark ? 0.2 : 0.08),
               Colors.transparent,
             ],
           ),
@@ -182,7 +188,7 @@ class _AdBanner extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       height: 50,
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.surfaceVariant,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
@@ -218,8 +224,8 @@ class _EmptyState extends StatelessWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppColors.primary.withValues(alpha: 0.18),
-                        AppColors.primary.withValues(alpha: 0.04),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.18),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.04),
                       ],
                     ),
                   ),
@@ -229,9 +235,9 @@ class _EmptyState extends StatelessWidget {
                   height: 88,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.12),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.12),
                   ),
-                  child: const Icon(Icons.flag_rounded, size: 42, color: AppColors.primary),
+                  child: Icon(Icons.flag_rounded, size: 42, color: Theme.of(context).colorScheme.primary),
                 ),
               ],
             ),

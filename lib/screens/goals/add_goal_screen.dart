@@ -119,7 +119,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
     final dateStr = DateFormat.yMMMMd().format(_targetDate);
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(AppStrings.t(context, _isEditing ? 'editGoal' : 'addGoal')),
         actions: [
@@ -172,7 +172,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_month_rounded, color: AppColors.primary),
+                    Icon(Icons.calendar_month_rounded, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(

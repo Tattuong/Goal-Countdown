@@ -40,10 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final shop = context.watch<ShopProvider>();
     final theme = context.watch<ThemeProvider>();
     final goals = context.watch<GoalsProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(AppStrings.t(context, 'settingsTitle')),
         actions: [
@@ -104,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           if (shop.hasWidgetStyles)
             ListTile(
-              leading: const Icon(Icons.style_outlined, color: AppColors.primary),
+              leading: Icon(Icons.style_outlined, color: Theme.of(context).colorScheme.primary),
               title: Text(AppStrings.t(context, 'shopFeatWidget')),
               subtitle: const Text('Choose widget style'),
               trailing: const Icon(Icons.chevron_right),
@@ -186,7 +185,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ...styles.map((s) {
               final (id, label, icon) = s;
               return ListTile(
-                leading: Icon(icon, color: AppColors.primary),
+                leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
                 title: Text(label),
                 onTap: () async {
                   await goals.syncWidget(widgetStyle: id);
@@ -251,7 +250,7 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.primary),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(title),
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
     );

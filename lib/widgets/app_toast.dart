@@ -17,7 +17,7 @@ class AppToast {
     Color? color,
   }) {
     final overlay = _overlay(context);
-    if (overlay == null) return;
+    if (overlay == null || !context.mounted) return;
 
     late OverlayEntry entry;
 
@@ -26,7 +26,7 @@ class AppToast {
         title: title,
         message: message,
         icon: icon,
-        color: color ?? AppColors.primary,
+        color: color ?? Theme.of(ctx).colorScheme.primary,
         onDismiss: () => entry.remove(),
       ),
     );
